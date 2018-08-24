@@ -1,0 +1,26 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/4f06edf9-4852-4a8d-b21d-5a230aaa3ef8 # 
+title: flightsProcessAPI
+
+types: 
+  Flights: !include datatypes/flights.raml
+
+/getFlights:
+  get:
+    queryParameters: 
+      destination:
+        required: false
+        enum: [SFO,LAX,PDX,CLE,PDF]
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: Flights[]
+            examples: !include examples/flightsExample.raml
+
+      400:
+        body: 
+          application/json:
+            example: {
+              "message": "No flights found, try again"
+            }
