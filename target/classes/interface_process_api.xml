@@ -3,25 +3,14 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    <apikit:config name="flightsProcessAPI-config" raml="flightsProcessAPI.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false">
-        <apikit:flow-mapping resource="/deltaFlights" action="get" flow-ref="searchandlistFlow"/>
-        <apikit:flow-mapping resource="/airlinesFlights" action="get" flow-ref="delta-unitedFlightsFlow"/>
+    <apikit:config name="flightsProcessAPI-config" raml="flightsProcessAPI.raml" consoleEnabled="true" doc:name="Router" keepRamlBaseUri="false" consolePath="console">
+        <apikit:flow-mapping resource="/deltaFlights" action="get" flow-ref="get:/deltaFlights"/>
+        <apikit:flow-mapping resource="/airlinesFlights" action="get" flow-ref="get:/airlinesFlights"/>
     </apikit:config>
     <flow name="flightsProcessAPI-main">
         <http:listener config-ref="global-httpListenerConfig" path="/process_api/*" doc:name="HTTP"/>
         <apikit:router config-ref="flightsProcessAPI-config" doc:name="APIkit Router"/>
         <exception-strategy ref="flightsProcessAPI-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
-    </flow>
-    <flow name="flightsProcessAPI-console">
-        <http:listener config-ref="global-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
-        <apikit:console config-ref="flightsProcessAPI-config" doc:name="APIkit Console"/>
-    </flow>
-    <flow name="get:/deltaFlights:flightsProcessAPI-config">
-        <flow-ref name="searchandlistFlow" doc:name="searchandlistFlow"/>
-    </flow>
-    <flow name="get:/airlinesFlights:flightsProcessAPI-config">
-        <flow-ref name="delta-unitedFlightsFlow" doc:name="delta-unitedFlightsFlow"/>
-
     </flow>
 
     <apikit:mapping-exception-strategy name="flightsProcessAPI-apiKitGlobalExceptionMapping">

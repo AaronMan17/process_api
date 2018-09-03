@@ -11,25 +11,19 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <ws:consumer-config name="Web_Service_Consumer" wsdlLocation="http://mu.mulesoft-training.com/essentials/delta?wsdl" service="TicketServiceService" port="TicketServicePort" serviceAddress="http://mule-worker-training-u.cloudhub.io:8081/essentials/delta" doc:name="Web Service Consumer"/>
     <http:request-config name="HTTP_Request_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Request Configuration" basePath="/system_api"/>
-    <flow name="searchandlistFlow">
+    <flow name="get:/deltaFlights">
         <set-variable variableName="destination" value="#[message.inboundProperties.'http.query.params'.destination]" doc:name="destination_Variable"/>
         <choice doc:name="Choice">
             <when expression="flowVars.destination == &quot;SFO&quot; || flowVars.destination == &quot;LAX&quot; || flowVars.destination == &quot;CLE&quot; || flowVars.destination == &quot;PDX&quot;">
-                <flow-ref name="getFlightsByCode" doc:name="getFlightsByCode"/>
+                <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlights" method="GET" doc:name="deltaRequest"/>
             </when>
             <otherwise>
-                <flow-ref name="getFlights" doc:name="getFlights"/>
+                <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlightsByCode" method="GET" doc:name="deltaRequestByCode">
+                    <http:request-builder>
+                        <http:query-param paramName="destination" value="#[flowVars.destination]"/>
+                    </http:request-builder>
+                </http:request>
             </otherwise>
         </choice>
-    </flow>
-    <flow name="getFlights">
-        <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlights" method="GET" doc:name="HTTP"/>
-    </flow>
-    <flow name="getFlightsByCode">
-        <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlightsByCode" method="GET" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-param paramName="destination" value="#[flowVars.destination]"/>
-            </http:request-builder>
-        </http:request>
     </flow>
 </mule>

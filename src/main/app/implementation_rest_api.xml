@@ -8,30 +8,22 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
-    <flow name="delta-unitedFlightsFlow">
+    <flow name="get:/airlinesFlights">
         <scatter-gather doc:name="Scatter-Gather">
             <processor-chain>
-                <flow-ref name="allUnitedFlights" doc:name="allUnitedFlights"/>
+                <http:request config-ref="HTTP_Request_Configuration" path="/unitedFlights" method="GET" doc:name="unitedRequest"/>
                 <logger level="INFO" doc:name="Logger"/>
             </processor-chain>
             <processor-chain>
-                <flow-ref name="allDeltaFlights" doc:name="allDeltaFlights"/>
+                <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlights" method="GET" doc:name="deltaRequest"/>
                 <logger level="INFO" doc:name="Logger"/>
             </processor-chain>
         </scatter-gather>
         <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
----
-flatten (payload)
-	]]></dw:set-payload>
+            <dw:set-payload resource="classpath:flights.dwl"/>
+
         </dw:transform-message>
         <logger level="INFO" doc:name="Logger"/>
     </flow>
-    <flow name="allDeltaFlights">
-        <http:request config-ref="HTTP_Request_Configuration" path="/deltaFlights" method="GET" doc:name="HTTP"/>
-    </flow>
-    <flow name="allUnitedFlights">
-        <http:request config-ref="HTTP_Request_Configuration" path="/unitedFlights" method="GET" doc:name="HTTP"/>
-    </flow>
+
 </mule>
