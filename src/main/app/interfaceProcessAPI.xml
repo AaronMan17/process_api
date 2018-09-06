@@ -3,7 +3,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    <apikit:config name="flightsProcessAPI-config" raml="flightsProcessAPI.raml" consoleEnabled="true" doc:name="Router" keepRamlBaseUri="false" consolePath="console">
+    <apikit:config name="flightsProcessAPI-config" raml="flightsProcessAPI.raml" consoleEnabled="true" doc:name="Router" consolePath="console" keepRamlBaseUri="false">
         <apikit:flow-mapping resource="/deltaFlights" action="get" flow-ref="get:/deltaFlights"/>
         <apikit:flow-mapping resource="/airlinesFlights" action="get" flow-ref="get:/airlinesFlights"/>
     </apikit:config>
